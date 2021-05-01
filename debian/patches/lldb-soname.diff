@@ -1,0 +1,43 @@
+---
+ lldb/source/API/CMakeLists.txt |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+Index: llvm-toolchain-snapshot_12~++20201006102312+4a8c70c3194/lldb/source/API/CMakeLists.txt
+===================================================================
+--- llvm-toolchain-snapshot_12~++20201006102312+4a8c70c3194.orig/lldb/source/API/CMakeLists.txt
++++ llvm-toolchain-snapshot_12~++20201006102312+4a8c70c3194/lldb/source/API/CMakeLists.txt
+@@ -19,7 +19,12 @@ if(LLDB_ENABLE_LUA)
+   set(lldb_lua_wrapper ${lua_bindings_dir}/LLDBWrapLua.cpp)
+ endif()
+ 
+-add_lldb_library(liblldb SHARED ${option_framework}
++set(output_name lldb)
++if (CMAKE_SYSTEM_NAME MATCHES "Windows")
++  set(output_name liblldb)
++endif()
++
++add_lldb_library(liblldb SHARED OUTPUT_NAME ${output_name} SONAME
+   SBAddress.cpp
+   SBAttachInfo.cpp
+   SBBlock.cpp
+@@ -163,7 +168,7 @@ endif()
+ 
+ set_target_properties(liblldb
+   PROPERTIES
+-  VERSION ${LLDB_VERSION}
++  VERSION 1
+ )
+ 
+ if (NOT CMAKE_SYSTEM_NAME MATCHES "Windows")
+@@ -188,11 +193,6 @@ if (MSVC)
+   if (LLDB_ENABLE_PYTHON)
+     target_link_libraries(liblldb PRIVATE ${Python3_LIBRARIES})
+   endif()
+-else()
+-  set_target_properties(liblldb
+-    PROPERTIES
+-    OUTPUT_NAME lldb
+-  )
+ endif()
+ 
+ # The Clang expression parser in LLDB requires the Clang resource directory to function.
